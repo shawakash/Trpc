@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { publicProcedure, router } from './trpc';
+import { protectedProcedure, publicProcedure, router } from './trpc';
 import { PrismaClient } from '@prisma/client';
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-const client = new PrismaClient();
 const SECRET = 'client';
 
 const todoInput = z.object({
@@ -18,30 +17,19 @@ const signupType = z.object({
 });
 
 const appRouter = router({
-    createTodo: publicProcedure
+    createTodo: protectedProcedure
         .input(todoInput)
-        .mutation(async (opt) => {
-            const username = opt.ctx.username;
-            const isUser = await client.user.findUnique({
-                where: {
-                    username
-                }
-            });
-
-            if(!isUser) {
-                return {
-                    message: 'Forbidden'
-                }
-            }
-
-            const { title, description } = opt.input;
-            const todo = await client.todo.create({
+        .mutation(async ({ ctx, input }) => {
+            const { id, prisma } = ctx;
+            console.log(id)
+            const { title, description } = input;
+            const todo = await prisma.todo.create({
                 data: {
                     title,
                     description,
                     User: {
                         connect: {
-                            id: isUser.id
+                            id
                         }
                     }
                 }
@@ -51,7 +39,7 @@ const appRouter = router({
     ,
     getTodo: publicProcedure
         .query(async (opt) => {
-            const todos = await client.user.findUnique({
+            const todos = await opt.ctx.prisma.user.findUnique({
                 where: {
                     id: 2
                 },
@@ -66,7 +54,8 @@ const appRouter = router({
         .input(signupType)
         .mutation(async (opts) => {
             const { username, password } = opts.input;
-            const isUser = await client.user.findFirst({
+            console.log(username)
+            const isUser = await opts.ctx.prisma.user.findFirst({
                 where: {
                     username
                 }
@@ -76,15 +65,15 @@ const appRouter = router({
                     message: 'Username Already Exists'
                 };
             }
-            const user = await client.user.create({
+            const user = await opts.ctx.prisma.user.create({
                 data: {
                     username,
                     password
                 }
             });
 
-            const token = jwt.sign({username}, SECRET);
-            return {token};
+            const token = jwt.sign({ id: user.id }, SECRET);
+            return { token };
 
         }),
 });
@@ -97,20 +86,17 @@ const server = createHTTPServer({
     router: appRouter,
     createContext(opts) {
         const token = opts.req.headers.authorization;
-        console.log(token);
-        // if(!token) {
-        //     return {
-        //         message: 'Token Required'
-        //     }
-        // }
-        // const decoded: JwtPayload | string = jwt.verify(token, SECRET);
-        // if(typeof decoded == 'string') {
-        //     return {
-        //         username: undefined
-        //     }
-        // }
+        let id: number | undefined;
+        if (token) {
+            const decoded: any = jwt.verify(token, SECRET);
+            if (typeof decoded == 'string') {
+               id = undefined;
+            }
+            id = decoded.id;
+        }
         return {
-            username: 'kirat5'
+            id,
+            prisma: new PrismaClient()
         }
     }
 });
