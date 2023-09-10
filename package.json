@@ -1,0 +1,15 @@
+{
+  "name": "Trpc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:shawakash/Trpc.git",
+  "author": "Akash Shaw <shawakash2003@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "5.2.0",
+    "@trpc/client": "^10.38.1",
+    "@trpc/server": "^10.38.1",
+    "prisma": "^5.2.0",
+    "zod": "^3.22.2"
+  }
+}
