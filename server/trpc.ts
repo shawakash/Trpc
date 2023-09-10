@@ -12,4 +12,3 @@ const t = initTRPC.create();
  */
 export const router = t.router;   // Similar yo app in express
 export const publicProcedure = t.procedure;   // helps to create a endpoint
-export const middleware  = t.middleware;

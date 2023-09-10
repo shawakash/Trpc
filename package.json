@@ -5,6 +5,9 @@
   "repository": "git@github.com:shawakash/Trpc.git",
   "author": "Akash Shaw <shawakash2003@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc -b"
+  },
   "dependencies": {
     "@prisma/client": "5.2.0",
     "@trpc/client": "^10.38.1",
