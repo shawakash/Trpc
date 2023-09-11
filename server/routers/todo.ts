@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
-const todoInput = z.object({
+export const todoInput = z.object({
     title: z.string(),
     description: z.string()
 });

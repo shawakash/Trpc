@@ -19,7 +19,7 @@ const trpc = createTRPCProxyClient<AppRouter>({
 
 const main = async () => {
     
-    const todos = await trpc.createTodo.mutate({
+    const todos = await trpc.todo.createTodo.mutate({
         title: 'Bonjour',
         description: 'French'
     });

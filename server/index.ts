@@ -16,6 +16,19 @@ const signupType = z.object({
 
 const appRouter = router({
     todo: todoRouter,
+    getTodo: publicProcedure
+        .query(async (opt) => {
+            const todos = await opt.ctx.prisma.user.findUnique({
+                where: {
+                    id: 2
+                },
+                select: {
+                    Todo: true
+                }
+            });
+            return todos;
+        }),
+
     signup: publicProcedure
         .input(signupType)
         .mutation(async (opts) => {
