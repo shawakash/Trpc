@@ -1,18 +1,14 @@
 import { z } from 'zod';
-import { protectedProcedure, publicProcedure, router } from './trpc';
+import { router } from './trpc';
 import { PrismaClient } from '@prisma/client';
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
-import jwt, { JwtPayload } from 'jsonwebtoken';
 import { todoRouter } from './routers/todo';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { userRouter } from './routers/user';
+import publicProcedure from './procedures/publicProcedure';
 
 const SECRET = 'client';
 
-
-
-const signupType = z.object({
-    username: z.string(),
-    password: z.string()
-});
 
 const appRouter = router({
     todo: todoRouter,
@@ -28,33 +24,7 @@ const appRouter = router({
             });
             return todos;
         }),
-
-    signup: publicProcedure
-        .input(signupType)
-        .mutation(async (opts) => {
-            const { username, password } = opts.input;
-            console.log(username)
-            const isUser = await opts.ctx.prisma.user.findFirst({
-                where: {
-                    username
-                }
-            });
-            if (isUser) {
-                return {
-                    message: 'Username Already Exists'
-                };
-            }
-            const user = await opts.ctx.prisma.user.create({
-                data: {
-                    username,
-                    password
-                }
-            });
-
-            const token = jwt.sign({ id: user.id }, SECRET);
-            return { token };
-
-        }),
+    user: userRouter
 });
 
 // Export type router type signature,

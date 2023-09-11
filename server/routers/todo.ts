@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { protectedProcedure, publicProcedure, router } from "../trpc";
+import { router } from "../trpc";
+import protectedProcedure from "../procedures/protectedProceduer";
+import publicProcedure from "../procedures/publicProcedure";
+
 
 export const todoInput = z.object({
     title: z.string(),

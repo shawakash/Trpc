@@ -10,7 +10,7 @@ const trpc = createTRPCProxyClient<AppRouter>({
       url: 'http://localhost:3000',
       async headers() {
         return {
-            "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkJvbmpvdXIiLCJpYXQiOjE2OTQzMjc2Njh9.n7j_mjlyKY4rHaM5cEoySKY8DMaDuu6vMvPUwqyZQ24"  // localstorage
+            "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlhdCI6MTY5NDQ0OTMzM30.1YqBetJoRxeS8hB7xD9ZJWA77SLXtAz1Gp-eBX2mPhE"  // localstorage
         }   
       }
     }),
@@ -19,9 +19,9 @@ const trpc = createTRPCProxyClient<AppRouter>({
 
 const main = async () => {
     
-    const user = await trpc.signup.mutate({
-        username: 'Bonjour2',
-        password: 'French'
+    const user = await trpc.user.signup.mutate({
+        username: 'Akash',
+        password: 'Indian'
     });
     console.log(user)
 }

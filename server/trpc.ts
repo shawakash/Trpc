@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 import { TRPCError, initTRPC } from '@trpc/server';
-// import { isUser } from './middleware/user';
+import { isUser } from './middleware/user';
 
 /**
  * Initialization of tRPC backend
  * Define the type for context = Different for different adapter
  * Should be done only once per backend!
  */
-const t = initTRPC.context<{
+export const t = initTRPC.context<{
     id?: number,
     prisma: PrismaClient
 }>().create();
@@ -18,25 +18,4 @@ const t = initTRPC.context<{
  * that can be used throughout the router
  */
 export const router = t.router;   // Similar yo app in express
-export const publicProcedure = t.procedure;   // helps to create a endpoint
 export const middleware = t.middleware;
-
-export const isUser = middleware(async (opts) => {
-    const { ctx } = opts;
-    const isUser = await ctx.prisma.user.findUnique({
-        where: {
-            id: ctx.id
-        }
-    });
-
-    if (!isUser) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-    }
-    return opts.next({
-        ctx: {
-            id: isUser.id
-        }
-    })
-})
-
-export const protectedProcedure = t.procedure.use(isUser);

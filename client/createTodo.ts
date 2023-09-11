@@ -1,29 +1,26 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import type { AppRouter } from '../server';
-//     👆 **type-only** import
- 
-// Pass AppRouter as generic here. 👇 This lets the `trpc` object know
-// what procedures are available on the server and their input/output types.
+
 const trpc = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
       url: 'http://localhost:3000',
       async headers() {
         return {
-            "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImlhdCI6MTY5NDMyODUwOH0.fQmNsp0YZaD6biD4zY7L45kyJ_ZOrqNubGHJ3X6dHMQ"  // localstorage
-        }   
-      }
+            Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlhdCI6MTY5NDQ0OTMzM30.1YqBetJoRxeS8hB7xD9ZJWA77SLXtAz1Gp-eBX2mPhE"
+        }
+      },
     }),
   ],
 });
 
-const main = async () => {
-    
-    const todos = await trpc.todo.createTodo.mutate({
-        title: 'Bonjour',
-        description: 'French'
+async function main() {
+    const user = await trpc.todo.createTodo.mutate({
+        title: "Loving It",
+        description: "Yeah I need only myself"
     });
-    console.log(todos)
+    console.log(user);
+    
 }
 
 main();
