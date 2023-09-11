@@ -3,13 +3,11 @@ import { protectedProcedure, publicProcedure, router } from './trpc';
 import { PrismaClient } from '@prisma/client';
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { todoRouter } from './routers/todo';
 
 const SECRET = 'client';
 
-const todoInput = z.object({
-    title: z.string(),
-    description: z.string()
-});
+
 
 const signupType = z.object({
     username: z.string(),
@@ -17,39 +15,7 @@ const signupType = z.object({
 });
 
 const appRouter = router({
-    createTodo: protectedProcedure
-        .input(todoInput)
-        .mutation(async ({ ctx, input }) => {
-            const { id, prisma } = ctx;
-            console.log(id)
-            const { title, description } = input;
-            const todo = await prisma.todo.create({
-                data: {
-                    title,
-                    description,
-                    User: {
-                        connect: {
-                            id
-                        }
-                    }
-                }
-            });
-            return todo;
-        })
-    ,
-    getTodo: publicProcedure
-        .query(async (opt) => {
-            const todos = await opt.ctx.prisma.user.findUnique({
-                where: {
-                    id: 2
-                },
-                select: {
-                    Todo: true
-                }
-            });
-            return todos;
-        }),
-
+    todo: todoRouter,
     signup: publicProcedure
         .input(signupType)
         .mutation(async (opts) => {
