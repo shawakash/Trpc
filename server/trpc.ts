@@ -7,10 +7,13 @@ import { isUser } from './middleware/user';
  * Define the type for context = Different for different adapter
  * Should be done only once per backend!
  */
-export const t = initTRPC.context<{
+
+export type ContextType = {
     id?: number,
     prisma: PrismaClient
-}>().create();
+}
+
+export const t = initTRPC.context<ContextType>().create();
 
 
 /**

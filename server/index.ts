@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { router } from './trpc';
+import { router, ContextType } from './trpc';
 import { PrismaClient } from '@prisma/client';
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import { todoRouter } from './routers/todo';
@@ -33,13 +33,14 @@ export type AppRouter = typeof appRouter;
 
 const server = createHTTPServer({
     router: appRouter,
+    // middleware: cors()
     createContext(opts) {
         const token = opts.req.headers.authorization;
         let id: number | undefined;
         if (token) {
             const decoded: any = jwt.verify(token, SECRET);
             if (typeof decoded == 'string') {
-               id = undefined;
+                id = undefined;
             }
             id = decoded.id;
         }
@@ -47,6 +48,24 @@ const server = createHTTPServer({
             id,
             prisma: new PrismaClient()
         }
+
+        /**
+         * return new Promise<ContextType>(resolve => {
+         *      jwt.verify(token, SECRET, (err, decoded) => {
+         *          if(err || typeof decoded == 'string') {
+         *              resolve({
+         *                  id: undefined,
+         *                  prisma: new PrismaClient()
+         *              })
+         *          }
+         *          resolve({
+         *              id: decoded.id,
+         *              prisma: new PrismaClient()
+         *          })
+         *          
+         * })
+         * })
+         */
     }
 });
 
