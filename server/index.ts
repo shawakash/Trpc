@@ -6,6 +6,7 @@ import { todoRouter } from './routers/todo';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { userRouter } from './routers/user';
 import publicProcedure from './procedures/publicProcedure';
+import cors from 'cors';
 
 const SECRET = 'client';
 
@@ -33,7 +34,7 @@ export type AppRouter = typeof appRouter;
 
 const server = createHTTPServer({
     router: appRouter,
-    // middleware: cors()
+    middleware: cors(),
     createContext(opts) {
         const token = opts.req.headers.authorization;
         let id: number | undefined;

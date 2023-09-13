@@ -18,7 +18,7 @@ const trpc = createTRPCProxyClient<AppRouter>({
 });
 
 const main = async () => {
-    
+  
     const user = await trpc.user.signup.mutate({
         username: 'Akash',
         password: 'Indian'
