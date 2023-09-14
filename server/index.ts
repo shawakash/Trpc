@@ -11,7 +11,7 @@ import cors from 'cors';
 const SECRET = 'client';
 
 
-const appRouter = router({
+export const appRouter = router({
     todo: todoRouter,
     getTodo: publicProcedure
         .query(async (opt) => {
